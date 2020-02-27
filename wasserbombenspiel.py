@@ -1,7 +1,11 @@
-import pgzero
+import pgzrun
 import random
+
+wasserbombe_rot = Actor("wasserbombe_rot")
 
 # Das ist die Funktion zum Zeichnen
 def draw():
-    pass
+    screen.clear()
+    wasserbombe_rot.draw()
 
+pgzrun.go()
