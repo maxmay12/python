@@ -17,6 +17,10 @@ speed_gegner_y  = 0
 wasserbombe_rot = Actor("wasserbombe_rot")
 wasserbombe_rot.pos = spieler.pos[0]+20, spieler.pos[1]+10
 
+
+wasserbombe_rot2 = Actor("wasserbombe_rot")
+wasserbombe_rot2.pos = gegner.pos[0]+20, gegner.pos[1]+10
+
 wurf            = False
 dx              = 0
 dy              = 0
@@ -27,6 +31,7 @@ def draw():
     spieler.draw()
     gegner.draw()
     wasserbombe_rot.draw()
+    wasserbombe_rot2.draw()
 
 def update():
     global wurf
@@ -74,6 +79,8 @@ def update():
     else:
         # Bewege Wasserbombe
         wasserbombe_rot.pos = wasserbombe_rot.pos[0]+dx, wasserbombe_rot.pos[1]+dy
+
+    wasserbombe_rot2.pos = gegner.pos[0]+20, gegner.pos[1]+10
 
     # Falls der Rand getroffen wird, setze die Wasserbombe zurück (Position neben Spieler)
     if wasserbombe_rot.pos[0] < 0 or wasserbombe_rot.pos[0] > WIDTH or wasserbombe_rot.pos[1] < 0 or wasserbombe_rot.pos[1] > HEIGHT or (dx == 0 and dy == 0):
