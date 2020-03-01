@@ -50,15 +50,12 @@ def draw():
         for l in range(1, gegner_leben+1):
             screen.blit('herz', (x_herz_gegner, 30))
             x_herz_gegner += 60
-    elif spieler_leben <= 0:
-        screen.fill((255, 0, 0))
-        screen.draw.text("Du hast verloren!", fontsize=60, center=CENTRE, color=FONT_COLOUR)
-    else:
+    elif gegner_leben <= 0:
         screen.fill((0, 255, 0))
         screen.draw.text("Du hast gewonnen!", fontsize=60, center=CENTRE, color=FONT_COLOUR)
-
-
-
+    else:
+        screen.fill((255, 0, 0))
+        screen.draw.text("Du hast verloren!", fontsize=60, center=CENTRE, color=FONT_COLOUR)
 
 def update():
     global wurf
