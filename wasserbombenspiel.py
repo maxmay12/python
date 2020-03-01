@@ -83,6 +83,10 @@ def update():
         if (spieler_leben <= 0 or gegner_leben <= 0):
             spieler_leben = 3
             gegner_leben = 3
+            spieler.pos     = WIDTH/2, HEIGHT/2
+            gegner.pos      = WIDTH/4, HEIGHT/4
+            wurf_gegner     = False
+            wurf            = False
 
     # Bewege Gegner    
     gegner.x += speed_gegner_x
