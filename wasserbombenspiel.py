@@ -3,20 +3,24 @@ import random
 
 WIDTH        = 1280
 HEIGHT       = 960
+CENTRE       = WIDTH/2, HEIGHT/2
+FONT_COLOUR  = (255, 255, 255)
 SPEED        = 2
 SPEEDBALOON  = 8
 
 spieler         = Actor("spieler")
 spieler.pos     = WIDTH/2, HEIGHT/2
+spieler_leben   = 3
 
 gegnerId        = random.randint(2, 3)
 gegner          = Actor("spieler" + str(gegnerId))
 gegner.pos      = WIDTH/4, HEIGHT/4
+gegner_leben    = 3
+
 speed_gegner_x  = 0
 speed_gegner_y  = 0
 wasserbombe_rot = Actor("wasserbombe_rot")
 wasserbombe_rot.pos = spieler.pos[0]+20, spieler.pos[1]+10
-
 
 wasserbombe_rot2 = Actor("wasserbombe_rot")
 wasserbombe_rot2.pos = gegner.pos[0]+20, gegner.pos[1]+10
@@ -26,20 +30,45 @@ wurf_gegner     = False
 wurf_pos        = spieler.pos
 dx              = 0
 dy              = 0
+space_vorher    = False
 
 # Das ist die Funktion zum Zeichnen
 def draw():
-    screen.fill((0, 0, 255))
-    spieler.draw()
-    gegner.draw()
-    wasserbombe_rot.draw()
-    wasserbombe_rot2.draw()
+    if spieler_leben > 0 and gegner_leben > 0:
+        screen.fill((0, 0, 255))
+        spieler.draw()
+        gegner.draw()
+        wasserbombe_rot.draw()
+        wasserbombe_rot2.draw()
+        screen.draw.text("Spieler", color=FONT_COLOUR, topleft=(10, 10))
+        x_herz = 10
+        for l in range(1, spieler_leben+1):
+            screen.blit('herz', (x_herz, 30))
+            x_herz += 60
+        screen.draw.text("Gegner", color=FONT_COLOUR, topleft=(1100, 10))
+        x_herz_gegner = 1100
+        for l in range(1, gegner_leben+1):
+            screen.blit('herz', (x_herz_gegner, 30))
+            x_herz_gegner += 60
+    elif spieler_leben <= 0:
+        screen.fill((255, 0, 0))
+        screen.draw.text("Du hast verloren!", fontsize=60, center=CENTRE, color=FONT_COLOUR)
+    else:
+        screen.fill((0, 255, 0))
+        screen.draw.text("Du hast gewonnen!", fontsize=60, center=CENTRE, color=FONT_COLOUR)
+
+
+
 
 def update():
     global wurf
+    global wurf_gegner
     global dx
     global dy
-
+    global spieler_leben
+    global gegner_leben
+    global space_vorher
+    
     # Bewege Spieler    
     if keyboard.left:
         spieler.x -= SPEED
@@ -53,14 +82,20 @@ def update():
     if keyboard.down:
         spieler.y += SPEED
 
+    if keyboard.ESCAPE:
+        if (spieler_leben <= 0 or gegner_leben <= 0):
+            spieler_leben = 3
+            gegner_leben = 3
+
     # Bewege Gegner    
     gegner.x += speed_gegner_x
     gegner.y += speed_gegner_y
     
 
     # Löse Wurf aus
-    if keyboard.space:
+    if keyboard.space and not space_vorher:
         wurf = True
+    space_vorher = keyboard.space
 
     # Ermittle Flugrichtung, falls noch nicht geworfen wurde (Bewegungsrichtung Spieler)
     if wurf == False:
@@ -81,6 +116,9 @@ def update():
     else:
         # Bewege Wasserbombe
         wasserbombe_rot.pos = wasserbombe_rot.pos[0]+dx, wasserbombe_rot.pos[1]+dy
+        if wasserbombe_rot.collidepoint(gegner.pos):
+            gegner_leben -= 1
+            wurf = False
 
     # Falls der Rand getroffen wird, setze die Wasserbombe zurück (Position neben Spieler)
     if wasserbombe_rot.pos[0] < 0 or wasserbombe_rot.pos[0] > WIDTH or wasserbombe_rot.pos[1] < 0 or wasserbombe_rot.pos[1] > HEIGHT or (dx == 0 and dy == 0):
@@ -92,6 +130,10 @@ def update():
     # Wasserbombe Gegner
     if wurf_gegner == False:
         wasserbombe_rot2.pos = gegner.pos[0]+20, gegner.pos[1]+10
+    else:
+        if wasserbombe_rot2.collidepoint(spieler.pos):
+            spieler_leben -= 1
+            wurf_gegner = False
 
 
 # Berechne eine zufällige Bewegungsrichtung für den Gegner
