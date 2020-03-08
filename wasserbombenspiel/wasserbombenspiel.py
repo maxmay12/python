@@ -155,7 +155,12 @@ def update():
         if spieler_leben < 3:
             spieler_leben += 1
             
-
+if neues_leben_sichtbar == True and neues_leben.collidepoint(gegner.pos):
+        neues_leben_sichtbar = False
+        clock.schedule(erzeuge_herz, 3.0)
+        if gegner_leben < 3:
+            gegner_leben += 1
+            
 # Berechne eine zufällige Bewegungsrichtung für den Gegner
 def aendere_bewegungsrichtung_gegner():
     global speed_gegner_x
