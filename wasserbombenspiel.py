@@ -32,6 +32,12 @@ dx              = 0
 dy              = 0
 space_vorher    = False
 
+neues_leben          = Actor("herz3")
+neues_leben_sichtbar = False
+x_neues_leben        = -10
+y_neues_leben        = -10
+neues_leben.pos      = x_neues_leben, y_neues_leben
+
 # Das ist die Funktion zum Zeichnen
 def draw():
     if spieler_leben > 0 and gegner_leben > 0:
@@ -50,6 +56,8 @@ def draw():
         for l in range(1, gegner_leben+1):
             screen.blit('herz', (x_herz_gegner, 30))
             x_herz_gegner += 60
+        if neues_leben_sichtbar:
+            neues_leben.draw()
     elif gegner_leben <= 0:
         screen.fill((0, 255, 0))
         screen.draw.text("Du hast gewonnen!", fontsize=60, center=(WIDTH/2, HEIGHT/2), color=FONT_COLOUR)
@@ -58,6 +66,8 @@ def draw():
         screen.fill((255, 0, 0))
         screen.draw.text("Du hast verloren!", fontsize=60, center=(WIDTH/2, HEIGHT/2), color=FONT_COLOUR)
         screen.draw.text("Drücke ESC, um neu zu starten.", center=(WIDTH/2, 4*HEIGHT/7), color=FONT_COLOUR)
+
+
 def update():
     global wurf
     global wurf_gegner
@@ -66,6 +76,8 @@ def update():
     global spieler_leben
     global gegner_leben
     global space_vorher
+    global neues_leben
+    global neues_leben_sichtbar
     
     # Bewege Spieler    
     if keyboard.left:
@@ -137,6 +149,12 @@ def update():
             spieler_leben -= 1
             wurf_gegner = False
 
+    if neues_leben_sichtbar == True and neues_leben.collidepoint(spieler.pos):
+        neues_leben_sichtbar = False
+        clock.schedule(erzeuge_herz, 3.0)
+        if spieler_leben < 3:
+            spieler_leben += 1
+            
 
 # Berechne eine zufällige Bewegungsrichtung für den Gegner
 def aendere_bewegungsrichtung_gegner():
@@ -150,6 +168,7 @@ def aendere_bewegungsrichtung_gegner():
     if((gegner.y < 100 and speed_gegner_y < 0) or (gegner.y>HEIGHT-100 and speed_gegner_y > 0)):
         speed_gegner_y = -speed_gegner_y
     clock.schedule(aendere_bewegungsrichtung_gegner, 1.0)
+
 
 def ruecksetzen_wasserbombe_gegner():
     global wurf_gegner
@@ -166,8 +185,18 @@ def werfe_wasserbombe_gegner():
     animate(wasserbombe_rot2, tween='linear', pos=wurf_pos, duration=1.2, on_finished=ruecksetzen_wasserbombe_gegner)
     clock.schedule(werfe_wasserbombe_gegner, 5.0)
 
+
+def erzeuge_herz():
+    global neues_leben
+    global neues_leben_sichtbar
+    neues_leben_sichtbar = True
+    x_neues_leben = random.randint(0, WIDTH)
+    y_neues_leben = random.randint(0, HEIGHT)
+    neues_leben.pos = x_neues_leben, y_neues_leben
+    
+
 aendere_bewegungsrichtung_gegner()
 clock.schedule(werfe_wasserbombe_gegner, 5.0)
-
+clock.schedule(erzeuge_herz, 1.0)
 
 pgzrun.go()
