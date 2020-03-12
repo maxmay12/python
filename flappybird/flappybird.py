@@ -3,7 +3,7 @@ import random
 
 WIDTH        = 600
 HEIGHT       = 800
-GAP = 130
+GAP          = 160
 SPEED = 3
 GRAVITY = 0.3
 FLAP_VELOCITY = -6.5
@@ -45,9 +45,21 @@ def update_bird():
             bird.image = "bird_three"
         else:
             bird.image = "bird_one"
+    if bird.colliderect (pipe_top) or bird.colliderect(pipe_bottom):
+        bird.dead = True
+        bird.image = "birddead"
+    if not 0 < bird.y < 720:
+        bird.y = 200
+        bird.dead = False
+        bird.vy = 0
+        reset_pipes()
 
+    
 def on_key_down():
     if not bird.dead:
         bird.vy = FLAP_VELOCITY
-
+        
+reset_pipes()
+    
 pgzrun.go()
+    
